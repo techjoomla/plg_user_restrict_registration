@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="user" method="upgrade">
+	<name>PLG_USER_RESTRICT_REGISTRATION</name>
+	<author>Techjoomla</author>
+	<creationDate>28th Sep 2021</creationDate>
+	<copyright>Copyright (C) 2014 - 2021 Techjoomla. All rights reserved.</copyright>
+	<authorEmail>extensions@techjoomla.com</authorEmail>
+	<authorUrl>https://techjoomla.com</authorUrl>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>__DEPLOY_VERSION__</version>
+	<description>This is user restrict plug-in will restrict the user after crossing a given user limit.</description>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_user_restrictregistration.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_user_restrictregistration.sys.ini</language>
+	</languages>
+	<files>
+		<filename plugin="restrictRegistration">restrictRegistration.php</filename>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field
+					name="userCount"
+					type="text"
+					label="PLG_USER_RESTRICT_REGISTRATION_USER_COUNT_LABLE"
+					description="PLG_USER_RESTRICT_REGISTRATION_USER_COUNT_LABLE_DESC"
+					>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
