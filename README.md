@@ -1,0 +1,1 @@
+# plg_user_restrict_registration
