@@ -1,10 +1,10 @@
 <?php
 /**
  * @package     Joomla.Plugin
- * @subpackage  User.restrictRegistration
+ * @subpackage  User.restrict_registration
  *
- * @copyright   Copyright (C) 2020 - 2021 Techjoomla, Tekdi Technologies Pvt. Ltd. All rights reserved.
- * @license     http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
+ * @copyright   Copyright (C) 2009 - 2021 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
