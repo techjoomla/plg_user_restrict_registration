@@ -9,13 +9,20 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>__DEPLOY_VERSION__</version>
 	<description>This is user restrict plug-in will restrict the user after crossing a given user limit.</description>
-	<languages>
-		<language tag="en-GB">language/en-GB/en-GB.plg_user_restrictregistration.ini</language>
-		<language tag="en-GB">language/en-GB/en-GB.plg_user_restrictregistration.sys.ini</language>
-	</languages>
+	<install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/restrictRegistration.install.sql</file>
+        </sql>
+    </install>
 	<files>
 		<filename plugin="restrictRegistration">restrictRegistration.php</filename>
+		<filename>index.html</filename>
+		<folder>sql</folder>
 	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_user_restrictregistration.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_user_restrictregistration.sys.ini</language>
+	</languages>
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
@@ -25,6 +32,24 @@
 					label="PLG_USER_RESTRICT_REGISTRATION_USER_COUNT_LABLE"
 					description="PLG_USER_RESTRICT_REGISTRATION_USER_COUNT_LABLE_DESC"
 					>
+				</field>
+
+				<field type="note" id="restrict-login-settings" name="restrict-login-settingss" label="PLG_USER_RESTRICT_LOGIN_SETTINGS" />
+
+				<field name="login_restrict" class="btn-group" type="radio" default="0" label="PLG_USER_RESTRICT_LOGIN_LABLE" description="PLG_USER_RESTRICT_LOGIN_LABLE_DESC" >
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+
+				<field name="loginUserCount" type="text"  class="validate-numeric" default="50" description="PLG_USER_RESTRICT_LOGIN_USER_COUNT_LABLE_DESC" label="PLG_USER_RESTRICT_LOGIN_USER_COUNT_LABLE" showon="login_restrict:1"/>
+
+				<field name="restrictPeriod" type="list" default="M"
+					description="PLG_USER_RESTRICT_PERIOD_LABLE_DESC"
+					label="PLG_USER_RESTRICT_PERIOD_LABLE" showon="login_restrict:1">
+					<option value="M">PLG_USER_RESTRICT_PERIOD_MONTHLY</option>
+					<option value="Q">PLG_USER_RESTRICT_PERIOD_QUARTERLY</option>
+					<option value="HY">PLG_USER_RESTRICT_PERIOD_HALF_YEARLY</option>
+					<option value="Y">PLG_USER_RESTRICT_PERIOD_YEARLY</option>
 				</field>
 			</fieldset>
 		</fields>

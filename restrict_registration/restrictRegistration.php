@@ -9,7 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\User\UserHelper;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -77,6 +79,89 @@ class PlgUserRestrictRegistration extends CMSPlugin
 				throw new InvalidArgumentException(Text::_('PLG_USER_RESTRICT_REGISTRATION_MSG'));
 
 				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * This method should handle any login logic and report back to the subject
+	 *
+	 * @param   array  $user     Holds the user data
+	 * @param   array  $options  Array holding options (remember, autoregister, group)
+	 *
+	 * @return  boolean  True on success
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function onUserLogin($user, $options = array())
+	{
+		$app = Factory::getApplication();
+		$now = new \DateTime();
+
+		$loginRestrictPermission = $this->params->get('login_restrict');
+
+		if ($loginRestrictPermission)
+		{
+			$loginUserCount = $this->params->get('loginUserCount');
+			$restrictPeriod = $this->params->get('restrictPeriod');
+
+			$userId = UserHelper::getUserId($user['username']);
+			$check = array();
+
+			// Get a db connection.
+			$db = JFactory::getDbo();
+
+			// Create a new query object.
+			$query = $db->getQuery(true);
+
+			$query->select('a.*');
+			$query->from($db->quoteName('#__plg_user_restrict_activities', 'a'));
+			$query->where('MONTH('.$db->quoteName('a.created').')  = '. $db->quote($now->format('m')));
+			$db->setQuery($query);
+			$users = $db->loadAssocList();
+			$userCount = count($users);
+
+			if ($this->app->isClient('site'))
+			{
+				foreach ($users as $user)
+				{
+					$check[] = $user['user_id'];
+				}
+
+				if (!(in_array($userId, $check)))
+				{
+					if ($loginUserCount <= $userCount)
+					{
+						// Add a message to the message queue
+						$this->app->enqueueMessage(Text::_('PLG_USER_RESTRICT_LOGIN_MSG'), 'warning');
+
+						Factory::getApplication()->setUserState('com_users.action.uid', (int) $userId);
+						$redirect_to_url = JURI::root().'index.php?option=com_users&view=login&'.JSession::getFormToken().'=1';
+						Factory::getApplication()->redirect($redirect_to_url);
+
+						return false;
+					}
+					else
+					{
+						// Insert columns.
+						$columns = array('user_id', 'action', 'created');
+
+						// Insert values.
+						$values = array($db->quote($userId), $db->quote('LOGIN'), $db->quote(date('Y-m-d H:i:s')));
+
+						// Prepare the insert query.
+						$query
+						    ->insert($db->quoteName('#__plg_user_restrict_activities'))
+						    ->columns($db->quoteName($columns))
+						    ->values(implode(',', $values));
+
+						// Set the query using our newly populated query object and execute it.
+						$db->setQuery($query);
+						$db->execute();
+					}
+				}
 			}
 		}
 
