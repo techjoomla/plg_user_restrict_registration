@@ -112,25 +112,22 @@ class PlgUserRestrictRegistration extends CMSPlugin
 			$userId = UserHelper::getUserId($user['username']);
 			$check = array();
 
-			// Get a db connection.
-			$db = JFactory::getDbo();
-
-			// Create a new query object.
-			$query = $db->getQuery(true);
-
-			$query->select('a.*');
-			$query->from($db->quoteName('#__plg_user_restrict_activities', 'a'));
-			$query->where('MONTH('.$db->quoteName('a.created').')  = '. $db->quote($now->format('m')));
-			$db->setQuery($query);
-			$users = $db->loadAssocList();
-			$userCount = count($users);
-
 			if ($this->app->isClient('site'))
 			{
-				foreach ($users as $user)
-				{
-					$check[] = $user['user_id'];
-				}
+				// Get a db connection.
+				$db = JFactory::getDbo();
+
+				// Create a new query object.
+				$query = $db->getQuery(true);
+
+				$query->select('a.*');
+				$query->from($db->quoteName('#__plg_user_restrict_activities', 'a'));
+				$query->where('MONTH('.$db->quoteName('a.created').')  = '. $db->quote($now->format('m')));
+				$db->setQuery($query);
+				$users = $db->loadAssocList();
+				$userCount = count($users);
+
+				$check = array_column($users, 'user_id');
 
 				if (!(in_array($userId, $check)))
 				{
