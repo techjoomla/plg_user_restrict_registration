@@ -2,7 +2,7 @@
 <extension version="3.1" type="plugin" group="user" method="upgrade">
 	<name>PLG_USER_RESTRICT_REGISTRATION</name>
 	<author>Techjoomla</author>
-	<creationDate>10th Oct 2021</creationDate>
+	<creationDate>28th Sep 2021</creationDate>
 	<copyright>Copyright (C) 2014 - 2021 Techjoomla. All rights reserved.</copyright>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
 	<authorUrl>https://techjoomla.com</authorUrl>

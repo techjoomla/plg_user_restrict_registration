@@ -1,10 +1,10 @@
 <?php
 /**
  * @package     Joomla.Plugin
- * @subpackage  User.restrictRegistration
+ * @subpackage  User.restrict_registration
  *
- * @copyright   Copyright (C) 2005 - 2021 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   Copyright (C) 2009 - 2021 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -13,10 +13,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-
-// Load language file for plugin.
-$lang = JFactory::getLanguage();
-$lang->load('plg_user_restrictregistration', JPATH_ADMINISTRATOR);
 
 /**
  * An example custom user restrict plugin.
