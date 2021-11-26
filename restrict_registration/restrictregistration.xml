@@ -52,6 +52,18 @@
 					<option value="HY">PLG_USER_RESTRICT_PERIOD_HALF_YEARLY</option>
 					<option value="Y">PLG_USER_RESTRICT_PERIOD_YEARLY</option> -->
 				</field>
+				<field type="note" id="restrict-active-unique-login-settings" name="restrict-active-unique-login-settingss" label="PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_SETTINGS" />
+				<field name="active_unique_login_restrict" class="btn-group" type="radio" default="0" label="PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_LABLE" description="PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_LABLE_DESC" >
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field
+					name="max_active_unique_logins"
+					type="number"
+					default="0"
+					label="PLG_USER_RESTRICT_MAX_ACTIVE_UNIQUE_LOGINS"
+					showon="active_unique_login_restrict:1"
+					/>
 				<field type="note" id="restrict-active-login-settings" name="restrict-active-login-settingss" label="PLG_USER_RESTRICT_ACTIVE_LOGIN_SETTINGS" />
 				<field name="active_login_restrict" class="btn-group" type="radio" default="0" label="PLG_USER_RESTRICT_ACTIVE_LOGIN_LABLE" description="PLG_USER_RESTRICT_ACTIVE_LOGIN_LABLE_DESC" >
 					<option value="1">JYES</option>

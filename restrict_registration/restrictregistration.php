@@ -104,6 +104,7 @@ class PlgUserRestrictRegistration extends CMSPlugin
 		$now = new \DateTime();
 
 		$loginRestrictPermission       = $this->params->get('login_restrict');
+		$activeUniqueLoginRestrictPermission = $this->params->get('active_unique_login_restrict');
 		$activeLoginRestrictPermission = $this->params->get('active_login_restrict');
 
 		if ($loginRestrictPermission)
@@ -166,9 +167,9 @@ class PlgUserRestrictRegistration extends CMSPlugin
 			}
 		}
 
-		if ($activeLoginRestrictPermission)
+		if ($activeUniqueLoginRestrictPermission)
 		{
-			$activeLoginUserCount = $this->params->get('max_active_logins');
+			$activeUniqueLoginUserCount = $this->params->get('max_active_unique_logins');
 
 			if ($this->app->isClient('site'))
 			{
@@ -219,9 +220,73 @@ class PlgUserRestrictRegistration extends CMSPlugin
 					return false;
 				}
 
-				if ($count_of_user_sessions >= $activeLoginUserCount)
+				if ($count_of_user_sessions >= $activeUniqueLoginUserCount)
 				{
-					$this->app->enqueueMessage(Text::sprintf('PLG_USER_RESTRICT_ACTIVE_LOGIN_ERROR_MESSAGE', $activeLoginUserCount), 'warning');
+					$this->app->enqueueMessage(Text::sprintf('PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_ERROR_MESSAGE', $activeUniqueLoginUserCount), 'warning');
+					Factory::getApplication()->setUserState('com_users.action.uid', (int) $userId);
+					$redirect_to_url = URI::root().'index.php?option=com_users&view=login&'.Session::getFormToken().'=1';
+					Factory::getApplication()->redirect($redirect_to_url);
+
+					return false;
+				}
+			}
+		}
+
+		if ($activeLoginRestrictPermission)
+		{
+			$activeLoginUserCount = $this->params->get('max_active_logins');
+
+			if ($this->app->isClient('site'))
+			{
+				$instance = $this->_getUser($user, $options);
+
+				// If _getUser returned an error, then pass it back.
+				if ($instance instanceof Exception)
+				{
+					return false;
+				}
+
+				// If the user is blocked, redirect with an error
+				if ($instance->block == 1)
+				{
+					$this->app->enqueueMessage(Text::_('JERROR_NOLOGIN_BLOCKED'), 'warning');
+
+					return false;
+				}
+
+				// Check the user can login.
+				$result = $instance->authorise($options['action']);
+
+				if (!$result)
+				{
+					$this->app->enqueueMessage(Text::_('JERROR_LOGIN_DENIED'), 'warning');
+
+					return false;
+				}
+
+				// Get the user sessions
+				$this->db = JFactory::getDbo();
+
+				$query = $this->db->getQuery(true);
+				$query->select('b.*');
+				$query->from($this->db->quoteName('#__session', 'b'));
+				$query->where($this->db->quoteName('b.guest') . ' = 0');
+				$query->where('(' . $this->db->quoteName('b.client_id') . ' = 0' . ' OR ' . $this->db->quoteName('b.client_id') . ' IS NULL' . ')'); // 0 is for users, 1 is for admins
+
+				try
+				{
+					$this->db->setQuery($query);
+					$count_of_active_user_sessions = count($this->db->loadObjectlist());
+				}
+				catch (RuntimeException $e)
+				{
+					JError::raiseError(500, $e->getMessage());
+					return false;
+				}
+
+				if ($count_of_active_user_sessions >= $activeLoginUserCount)
+				{
+					$this->app->enqueueMessage(Text::_('PLG_USER_RESTRICT_ACTIVE_LOGIN_MSG'), 'warning');
 					Factory::getApplication()->setUserState('com_users.action.uid', (int) $userId);
 					$redirect_to_url = URI::root().'index.php?option=com_users&view=login&'.Session::getFormToken().'=1';
 					Factory::getApplication()->redirect($redirect_to_url);
