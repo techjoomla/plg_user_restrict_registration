@@ -169,8 +169,6 @@ class PlgUserRestrictRegistration extends CMSPlugin
 
 		if ($activeUniqueLoginRestrictPermission)
 		{
-			$activeUniqueLoginUserCount = $this->params->get('max_active_unique_logins');
-
 			if ($this->app->isClient('site'))
 			{
 				$instance = $this->_getUser($user, $options);
@@ -220,9 +218,9 @@ class PlgUserRestrictRegistration extends CMSPlugin
 					return false;
 				}
 
-				if ($count_of_user_sessions >= $activeUniqueLoginUserCount)
+				if (!empty($count_of_user_sessions))
 				{
-					$this->app->enqueueMessage(Text::sprintf('PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_ERROR_MESSAGE', $activeUniqueLoginUserCount), 'warning');
+					$this->app->enqueueMessage(Text::_('PLG_USER_RESTRICT_ACTIVE_UNIQUE_LOGIN_ERROR_MESSAGE'), 'warning');
 					Factory::getApplication()->setUserState('com_users.action.uid', (int) $userId);
 					$redirect_to_url = URI::root().'index.php?option=com_users&view=login&'.Session::getFormToken().'=1';
 					Factory::getApplication()->redirect($redirect_to_url);
@@ -286,7 +284,7 @@ class PlgUserRestrictRegistration extends CMSPlugin
 
 				if ($count_of_active_user_sessions >= $activeLoginUserCount)
 				{
-					$this->app->enqueueMessage(Text::_('PLG_USER_RESTRICT_ACTIVE_LOGIN_MSG'), 'warning');
+					$this->app->enqueueMessage(Text::sprintf('PLG_USER_RESTRICT_ACTIVE_LOGIN_MSG', $activeLoginUserCount), 'warning');
 					Factory::getApplication()->setUserState('com_users.action.uid', (int) $userId);
 					$redirect_to_url = URI::root().'index.php?option=com_users&view=login&'.Session::getFormToken().'=1';
 					Factory::getApplication()->redirect($redirect_to_url);
